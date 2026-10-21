@@ -1,4 +1,4 @@
-
+import pickle
 myCarList = {}
 i = 1
 class Vehicles:
@@ -28,6 +28,29 @@ class Vehicles:
             print ("Car deleted")
         else:
             print("Car not found")
+car = Vehicles()
+
+while True:
+    choice = int(input("Enter your choice: "))
+    if choice == 1:
+        car.new_car()
+    elif choice == 2:
+        car.delete_car()
+    elif choice == 3:
+        car.display_car()
+    elif choice == 4:
+        file1 = open("myCarList.dat", "wb")
+        pickle.dump(myCarList, file1)
+        file1.close()
+        file2 = open("myCarList.dat", "rb")
+        try:
+            data = pickle.load(file2)
+            print(data)
+        except(EOFError):
+            break
+    else:
+        exit()
+
 employees = {}
    
 def add_employee():
@@ -90,21 +113,5 @@ while True:
         break
     else:
         print("Invalid choice. Please try again.")
-
-car = Vehicles()
-
-
-car.display_car()
-while True:
-    choice = int(input("Enter your choice: "))
-    if choice == 1:
-        car.new_car()
-    elif choice == 2:
-        car.delete_car()
-    elif choice == 3:
-        car.display_car()
-    else:
-        exit()
-
 
 
