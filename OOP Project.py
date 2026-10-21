@@ -1,6 +1,33 @@
 employees = []
-
-
+myCarList = {}
+i = 1
+class Vehicles:
+    def __init__(self):
+        self.make = None
+        self.model = None
+        self.year = None
+        self.color = None
+        self.vin = None
+        self.license_plate = None
+    def new_car(self):
+        global i
+        self.make = input("Enter your make : ")
+        self.model = input("Enter your model : ")
+        self.year = input("Enter your year : ")
+        self.color = input("Enter your color : ")
+        self.vin = input("Enter your vin : ")
+        self.license_plate = input("Enter your license_plate : ")
+        myCarList.update({"c"+str(i):{"Make":self.make, "Model":self.model, "Year":self.year, "Color":self.color, "Vin":self.vin, "License_plate":self.license_plate}})
+        i=i+1
+    def display_car(self):
+        print(myCarList)
+    def delete_car(self):
+        car_code = input("Enter car code: ")
+        if car_code in myCarList:
+            del myCarList[car_code]
+            print ("Car deleted")
+        else:
+            print("Car not found")
 def add_employee():
     print("\n--- Add New Employee ---")
 
@@ -10,7 +37,6 @@ def add_employee():
     phone = input("Enter Phone Number: ")
     vehicle = input("Enter Vehicle Information: ")
     hourly_rate = float(input("Enter Hourly Pay Rate: "))
-
     employee = {
         "Employee ID": employee_id,
         "Name": name,
@@ -75,5 +101,20 @@ def main():
 
 if __name__ == "__main__":
     main()
+car = Vehicles()
+
+
+car.display_car()
+while True:
+    choice = int(input("Enter your choice: "))
+    if choice == 1:
+        car.new_car()
+    elif choice == 2:
+        car.delete_car()
+    elif choice == 3:
+        car.display_car()
+    else:
+        exit()
+
 
 
