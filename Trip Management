@@ -1,0 +1,62 @@
+class User:
+    def __init__(self, name, user_type):
+        self.name = name
+        self.user_type = user_type  # 'rider' or 'driver'
+
+class Ride:
+    def __init__(self, rider, driver, distance_miles, rate_per_mile=2.50, base_fare=5.00):
+        self.rider = rider
+        self.driver = driver
+        self.distance_miles = distance_miles
+        self.rate_per_mile = rate_per_mile
+        self.base_fare = base_fare
+        self.fare = self.calculate_fare()
+
+    def calculate_fare(self):
+        """Calculates the total fare based on distance, rate, and base fee."""
+        return self.base_fare + (self.distance_miles * self.rate_per_mile)
+
+class RideshareApp:
+    def __init__(self):
+        self.users = []
+        self.rides = []
+
+    def register_user(self, name, user_type):
+        user = User(name, user_type)
+        self.users.append(user)
+        return user
+
+    def request_ride(self, rider_name, driver_name, distance_miles):
+        rider = next((u for u in self.users if u.name == rider_name and u.user_type == 'rider'), None)
+        driver = next((u for u in self.users if u.name == driver_name and u.user_type == 'driver'), None)
+
+        if not rider:
+            return f"Error: Rider '{rider_name}' not found."
+        if not driver:
+            return f"Error: Driver '{driver_name}' not found."
+
+        new_ride = Ride(rider, driver, distance_miles)
+        self.rides.append(new_ride)
+        return new_ride
+
+    def get_total_revenue(self):
+        """Calculates total revenue across all rides."""
+        return sum(ride.fare for ride in self.rides)
+
+
+if __name__ == "__main__":
+    app = RideshareApp()
+
+    # Register users
+    app.register_user("Alice", "rider")
+    app.register_user("Emma", "driver")
+    app.register_user("Charlie", "rider")
+
+    # Request rides and calculate fares
+    ride1 = app.request_ride("Alice", "Emma", 12.5)
+    ride2 = app.request_ride("Charlie", "Emma", 8.0)
+
+    print(f"Ride 1 Fare for Alice (Driver: Emma): ${ride1.fare:.2f}")
+    print(f"Ride 2 Fare for Charlie (Driver: Emma): ${ride2.fare:.2f}")
+    print(f"Total Platform Revenue: ${app.get_total_revenue():.2f}")
+
