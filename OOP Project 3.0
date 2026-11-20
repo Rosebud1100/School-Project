@@ -1,0 +1,194 @@
+#Dictionaries
+myUserlist = {}
+myEmplist = {}
+myVehiclelist = {}
+myRidelist = {}
+
+#Counters
+uCounter = 1
+eCounter = 1
+vCounter = 1
+rCounter = 1
+
+#Classes
+class User:
+    def __init__(self):
+        self.userId = None
+        self.userName = None
+        self.userPassword = None
+        self.userPhone = None
+        self.userEmail = None
+        self.userAddress = None
+    def create_user(self):
+        global uCounter
+        self.userId = input("Enter User ID: ")
+        self.userName = input("Enter User Name: ")
+        self.userPassword = input("Enter User Password: ")
+        self.userPhone = input("Enter User Phone Number: ")
+        self.userEmail = input("Enter User Email: ")
+        self.userAddress = input("Enter User Address: ")
+        myUserlist.update({"U"+str(uCounter): {"User ID": self.userId, "Name": self.userName,
+                                               "Password": self.userPassword, "Phone": self.userPhone,
+                                               "Email": self.userEmail, "Address": self.userAddress}})
+        print("User successfully created")
+        uCounter = uCounter + 1
+class Employee:
+    def __init__(self):
+        self.empID = None
+        self.empName = None
+        self.empPassword = None
+        self.empPhone = None
+        self.empEmail = None
+        self.empAddress = None
+        self.empVehicle = None
+        self.empWage = None
+    def create_employee(self):
+        global eCounter
+        self.empID = input("Enter Employee ID: ")
+        self.empName = input("Enter Employee Name: ")
+        self.empPassword = input("Enter Employee Password: ")
+        self.empPhone = input("Enter Employee Phone Number: ")
+        self.empEmail = input("Enter Employee Email: ")
+        self.empAddress = input("Enter Employee Address: ")
+        has_car = input("Do you have a car? (Y/N): ")
+        if has_car.lower() == "y":
+            car = Vehicle()
+            car.create_vehicle()
+            self.empVehicle = car
+            myEmplist.update({"E"+str(eCounter): {"User ID": self.empID, "empName": self.empName,
+                                                  "Password": self.empPassword, "Phone": self.empPhone,
+                                                  "Email": self.empEmail, "Address": self.empAddress,
+                                                  "Vehicle": (self.empVehicle.vehicleMake + " " + self.empVehicle.vehicleModel), "Available": True}})
+
+        print("Employee successfully created")
+        eCounter = eCounter + 1
+class Vehicle:
+    def __init__(self):
+        self.vehicleMake = None
+        self.vehicleModel = None
+        self.vehicleYear = None
+        self.vehicleColor = None
+        self.vehicleVin = None
+        self.vehiclePlate = None
+    def create_vehicle(self):
+        global vCounter
+        self.vehicleMake = input("Enter Vehicle Make: ")
+        self.vehicleModel = input("Enter Vehicle Model: ")
+        self.vehicleYear = input("Enter Vehicle Year: ")
+        self.vehicleColor = input("Enter Vehicle Color: ")
+        self.vehicleVin = input("Enter Vehicle VIN: ")
+        self.vehiclePlate = input("Enter Vehicle Plate: ")
+        myVehiclelist.update({"V"+str(vCounter): {"Vehicle Make": self.vehicleMake, "Model": self.vehicleModel,
+                                                  "Year": self.vehicleYear, "Color": self.vehicleColor,
+                                                  "VIN": self.vehicleVin, "Plate": self.vehiclePlate}})
+        print("Vehicle successfully created")
+        vCounter = vCounter + 1
+class Ride:
+    def __init__(self):
+        self.ratePerMile = None
+        self.rideUser = None
+        self.rideDriver = None
+        self.rideVehicle = None
+        self.ridePickup = None
+        self.rideDestination = None
+        self.rideMiles = None
+        self.rideTips = None
+        self.rideCost = None
+    def create_ride(self):
+        global rCounter
+        print ("Request a Ride")
+
+        if len(myUserlist) == 0:
+            print("No users found")
+            return
+        self.rideUser = input("Enter Ride User: ")
+        user = None
+        for u_key, u_info in myUserlist.items():
+            if u_info["Name"] == self.rideUser:
+                user = u_info["Name"]
+                assigned_emp = None
+                for emp_key, emp_info in myEmplist.items():
+                    if emp_info["Vehicle"] != "None" and emp_info["Available"] == True:
+                        assigned_emp = emp_info
+                        self.ridePickup = input("Enter Pickup Location: ")
+                        self.rideDestination = input("Enter Destination Location: ")
+                        self.rideDriver = assigned_emp["empName"]
+                        self.rideVehicle = assigned_emp["Vehicle"]
+                        assigned_emp["Available"] = False
+                        self.calculate_cost()
+                        myRidelist.update({"R" + str(rCounter): {"Passenger": self.rideUser,
+                                                                 "Driver": self.rideDriver,
+                                                                 "Vehicle": self.rideVehicle,
+                                                                 "Pickup": self.ridePickup,
+                                                                 "Destination": self.rideDestination,
+                                                                 "Miles": self.rideMiles,
+                                                                 "Tip": self.rideTip,
+                                                                 "Total Cost": self.rideCost}})
+                        print(" RIDE CONFIRMED!")
+                        print("Passenger: " + self.rideUser)
+                        print("Driver Name: " + self.rideDriver)
+                        print("Vehicle:" + self.rideVehicle)
+                        print("Pickup Location: " + self.ridePickup)
+                        print("Destination: " + self.rideDestination)
+                        rCounter = rCounter + 1
+                        return
+                    if assigned_emp is None:
+                        print("No users found")
+                        exit()
+                return
+
+            elif user is None:
+                print("User not found. Sorry...")
+                return
+
+    def calculate_cost(self):
+        baseFare = 10.00
+        ratePerMile = 1.50
+
+        self.rideMiles = int(input("Enter Miles Driven: "))
+        self.rideTips = int(input("Enter Tips: "))
+        self.rideCost = baseFare + self.rideMiles*ratePerMile + self.rideTips
+
+        print("Base Fare: " + baseFare)
+        print("Miles Driven: $" + self.rideMiles + "Miles")
+        print("Mileage Charged:  $" + (self.rideMiles*ratePerMile))
+        print("Tips: $" + (self.rideTip))
+        print("Cost: $" + (self.rideCost))
+
+while True:
+    print("1. Add a User")
+    print("2. Add an Employee")
+    print("3. Request a Ride")
+    print("4. View Users")
+    print("5. View Employees")
+    print("6. View Vehicles")
+    print("7. View Rides")
+    print("8. Exit")
+
+    choice = input("Select an option (1-8): ")
+
+    if choice == "1":
+        new_user = User()
+        new_user.create_user()
+    elif choice == "2":
+        new_emp = Employee()
+        new_emp.create_employee()
+    elif choice == "3":
+        new_ride = Ride()
+        new_ride.create_ride()
+    elif choice == "4":
+        print("Users")
+        print(myUserlist)
+    elif choice == "5":
+        print("Employees")
+        print(myEmplist)
+    elif choice == "6":
+        print("Vehicles")
+        print(myVehiclelist)
+    elif choice == "7":
+        print("Rides")
+        print(myRidelist)
+    elif choice == "8":
+        break
+    else:
+        print("Invalid choice, please try again.")
